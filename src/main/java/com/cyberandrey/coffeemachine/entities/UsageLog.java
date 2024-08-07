@@ -2,14 +2,12 @@ package com.cyberandrey.coffeemachine.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Entity
 @Table(name = "usage_log")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsageLog {
@@ -21,6 +19,26 @@ public class UsageLog {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "type_id")
     private CoffeeType coffeeType;
+
+    public int getId() {
+        return id;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public CoffeeType getCoffeeType() {
+        return coffeeType;
+    }
+
+    public void setCoffeeType(CoffeeType coffeeType) {
+        this.coffeeType = coffeeType;
+    }
 
     @Override
     public String toString() {
