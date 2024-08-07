@@ -20,7 +20,7 @@ public class Machine {
     private Integer water;
     private Integer beans;
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "typeId")
+    @JoinColumn(name = "machine_id")
     private List<CoffeeType> coffeeTypes;
 
     @Override

@@ -14,6 +14,18 @@ import lombok.NoArgsConstructor;
 public class CoffeeType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "type_id")
     private int typeId;
     private String name;
+    @Column(name = "machine_id")
+    private Integer machineId;
+
+    @Override
+    public String toString() {
+        return "CoffeeType{" +
+                "typeId=" + typeId +
+                ", name='" + name + '\'' +
+                ", machineId='" + machineId + '\'' +
+                '}';
+    }
 }

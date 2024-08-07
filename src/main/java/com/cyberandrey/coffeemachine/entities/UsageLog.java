@@ -19,6 +19,14 @@ public class UsageLog {
     @Column(name="timestamp", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp timestamp;
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "typeId")
+    @JoinColumn(name = "type_id")
     private CoffeeType coffeeType;
+
+    @Override
+    public String toString() {
+        return "UsageLog{" +
+                "timestamp=" + timestamp +
+                ", coffeeType=" + coffeeType +
+                '}';
+    }
 }

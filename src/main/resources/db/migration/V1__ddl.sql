@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS machine
 
 CREATE TABLE IF NOT EXISTS coffee_type
 (
-    typeId    SERIAL PRIMARY KEY,
+    type_id    SERIAL PRIMARY KEY,
     name      VARCHAR(255),
     machine_id  INT NOT NULL
 );
@@ -25,17 +25,17 @@ ALTER TABLE coffee_type
     ADD CONSTRAINT fk_coffee_type FOREIGN KEY(machine_id) REFERENCES machine(id);
 
 ALTER TABLE usage_log
-    ADD CONSTRAINT fk_coffee_type FOREIGN KEY(coffee_type) REFERENCES coffee_type(typeId);
+    ADD CONSTRAINT fk_coffee_type FOREIGN KEY(coffee_type) REFERENCES coffee_type(type_id);
 
 INSERT INTO machine
 (id, name, water, beans)
 VALUES ( '1', 'Proxima F11 Plus', 2500, 800);
 
-INSERT INTO coffee_type (typeId, name, machine_id)
+INSERT INTO coffee_type (type_id, name, machine_id)
 VALUES ( '1', 'cappuccino', '1');
 
-INSERT INTO coffee_type (typeId, name, machine_id)
+INSERT INTO coffee_type (type_id, name, machine_id)
 VALUES ( '2', 'espresso', '1');
 
-INSERT INTO coffee_type (typeId, name, machine_id)
+INSERT INTO coffee_type (type_id, name, machine_id)
 VALUES ( '3', 'american', '1');
