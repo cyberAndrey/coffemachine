@@ -11,5 +11,7 @@
 /machine/refresh - обновить воду и кофе в машинах
 /machine/info - информация о состоянии машин
 
+/log/{limit} - получение журнала использований с {limit} записей
+
 Данные подключения бд в application.properties
 Тест через Swagger по адресу http://localhost:8080/swagger-ui/index.html в разделе machine-controller

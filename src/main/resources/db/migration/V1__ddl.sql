@@ -18,14 +18,11 @@ CREATE TABLE IF NOT EXISTS usage_log
     id    SERIAL PRIMARY KEY,
     timestamp  timestamp without time zone NOT NULL
         DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
-    coffee_type  INT NOT NULL
+    action  VARCHAR(255) NOT NULL
 );
 
 ALTER TABLE coffee_type
     ADD CONSTRAINT fk_coffee_type FOREIGN KEY(machine_id) REFERENCES machine(id);
-
-ALTER TABLE usage_log
-    ADD CONSTRAINT fk_coffee_type FOREIGN KEY(coffee_type) REFERENCES coffee_type(type_id);
 
 INSERT INTO machine
 (id, name, water, beans)

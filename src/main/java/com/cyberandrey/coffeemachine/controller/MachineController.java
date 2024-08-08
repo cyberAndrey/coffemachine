@@ -4,10 +4,14 @@ import com.cyberandrey.coffeemachine.configuration.Strings;
 import com.cyberandrey.coffeemachine.entities.CoffeeType;
 import com.cyberandrey.coffeemachine.entities.Machine;
 import com.cyberandrey.coffeemachine.entities.MachineInfo;
+import com.cyberandrey.coffeemachine.entities.UsageLog;
 import com.cyberandrey.coffeemachine.repositories.MachineInfoRepo;
 import com.cyberandrey.coffeemachine.repositories.MachineRepo;
+import com.cyberandrey.coffeemachine.repositories.UsageLogRepo;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Optional;
 
 @RestController
@@ -16,11 +20,13 @@ public class MachineController {
 
     private final MachineRepo machineRepo;
     private final MachineInfoRepo machineInfoRepo;
+    private final UsageLogRepo usageLogRepo;
     Machine currentWork;
 
-    public MachineController(MachineRepo machineRepo, MachineInfoRepo machineInfoRepo) {
+    public MachineController(MachineRepo machineRepo, MachineInfoRepo machineInfoRepo, UsageLogRepo usageLogRepo) {
         this.machineRepo = machineRepo;
         this.machineInfoRepo = machineInfoRepo;
+        this.usageLogRepo = usageLogRepo;
         this.currentWork = null;
     }
 
@@ -63,6 +69,7 @@ public class MachineController {
                     currentWork.setWater(currentWork.getWater()-coffeeType.getVolume());
                     currentWork.setBeans(currentWork.getBeans()-coffeeType.getSubstance());
                     machineRepo.save(currentWork);
+                    logAction(coffeeType.toString());
                     return new Coffee(coffeeType.getName(), coffeeType.getVolume()).toString();
                 }
                 return message;
@@ -90,7 +97,15 @@ public class MachineController {
             machine.setWater(machineInfo.getWater());
             machine.setBeans(machineInfo.getBeans());
             machineRepo.save(machine);
+            logAction(Strings.UPDATED);
         }
         return Strings.UPDATED;
+    }
+
+    private void logAction(String action) {
+        UsageLog usageLog = new UsageLog();
+        usageLog.setAction(action);
+        usageLog.setTimestamp(Instant.now());
+        usageLogRepo.save(usageLog);
     }
 }
