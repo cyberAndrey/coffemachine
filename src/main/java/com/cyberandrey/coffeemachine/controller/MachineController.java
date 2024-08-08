@@ -10,7 +10,6 @@ import com.cyberandrey.coffeemachine.repositories.MachineRepo;
 import com.cyberandrey.coffeemachine.repositories.UsageLogRepo;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Optional;
 
