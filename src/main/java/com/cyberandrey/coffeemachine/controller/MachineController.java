@@ -8,6 +8,7 @@ import com.cyberandrey.coffeemachine.entities.UsageLog;
 import com.cyberandrey.coffeemachine.repositories.MachineInfoRepo;
 import com.cyberandrey.coffeemachine.repositories.MachineRepo;
 import com.cyberandrey.coffeemachine.repositories.UsageLogRepo;
+import com.cyberandrey.coffeemachine.service.MachineService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -16,31 +17,24 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/machine")
 public class MachineController {
-
-    private final MachineRepo machineRepo;
-    private final MachineInfoRepo machineInfoRepo;
-    private final UsageLogRepo usageLogRepo;
+    private final MachineService machineService;
     Machine currentWork;
 
-    public MachineController(MachineRepo machineRepo, MachineInfoRepo machineInfoRepo, UsageLogRepo usageLogRepo) {
-        this.machineRepo = machineRepo;
-        this.machineInfoRepo = machineInfoRepo;
-        this.usageLogRepo = usageLogRepo;
+    public MachineController(MachineService machineService) {
+        this.machineService = machineService;
         this.currentWork = null;
     }
-
-    private static record Coffee(String name, int volume) {}
 
     @GetMapping("on/{id}")
     public String onMachine(@PathVariable Integer id) {
         if (currentWork != null)
             return Strings.ALREADY_ON;
-        Optional<Machine> machine = machineRepo.findById(id);
-        if (machine.isPresent()) {
-            currentWork = machine.get();
+        try {
+            currentWork = machineService.onMachine(id);
             return currentWork.toString();
+        } catch (NullPointerException e) {
+            return e.getMessage();
         }
-        return Strings.NOT_FOUND;
     }
 
     @GetMapping("/off")
@@ -56,55 +50,27 @@ public class MachineController {
     @GetMapping("/pour/{id}")
     public String pourCoffee(@PathVariable Integer id) {
         if (currentWork != null) {
-            var desiredCoffee = currentWork.getCoffeeTypes().stream().filter(ct -> ct.getTypeId() == id).findFirst();
-            if (desiredCoffee.isPresent()) {
-                CoffeeType coffeeType = desiredCoffee.get();
-                String message = "";
-                if (currentWork.getWater() < coffeeType.getVolume())
-                    message += Strings.NOT_WATER;
-                if (currentWork.getBeans() < coffeeType.getSubstance())
-                    message += Strings.NOT_BEANS;
-                if (message.isEmpty()) {
-                    currentWork.setWater(currentWork.getWater()-coffeeType.getVolume());
-                    currentWork.setBeans(currentWork.getBeans()-coffeeType.getSubstance());
-                    machineRepo.save(currentWork);
-                    logAction(coffeeType.toString());
-                    return new Coffee(coffeeType.getName(), coffeeType.getVolume()).toString();
-                }
-                return message;
+            try {
+                return machineService.pourCoffee(currentWork, id);
+            } catch (NullPointerException e) {
+                return e.getMessage();
             }
-            return Strings.UNAVAILABLE_TYPE;
         }
         return Strings.ALREADY_OFF;
     }
 
     @GetMapping("/info")
     public String checkState() {
-        var machines = machineRepo.findAll();
-        String state = "";
-        for (Machine machine : machines) {
-            state += machine.toString() + "\n";
-        }
-        return state;
+        return machineService.checkState();
     }
 
     @GetMapping("/refresh")
     public String refreshMachines() {
-        var machines = machineRepo.findAll();
-        for (Machine machine : machines) {
-            MachineInfo machineInfo = machineInfoRepo.getReferenceById(machine.getId());
-            machine.setWater(machineInfo.getWater());
-            machine.setBeans(machineInfo.getBeans());
-            machineRepo.save(machine);
-            logAction(Strings.UPDATED);
+        try {
+            machineService.refreshMachines();
+            return Strings.UPDATED;
+        } catch (Exception e) {
+            return e.getMessage();
         }
-        return Strings.UPDATED;
-    }
-
-    private void logAction(String action) {
-        UsageLog usageLog = new UsageLog();
-        usageLog.setAction(action);
-        usageLog.setTimestamp(Instant.now());
-        usageLogRepo.save(usageLog);
     }
 }
