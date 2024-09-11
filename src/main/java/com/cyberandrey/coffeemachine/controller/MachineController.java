@@ -1,18 +1,9 @@
 package com.cyberandrey.coffeemachine.controller;
 
 import com.cyberandrey.coffeemachine.configuration.Strings;
-import com.cyberandrey.coffeemachine.entities.CoffeeType;
 import com.cyberandrey.coffeemachine.entities.Machine;
-import com.cyberandrey.coffeemachine.entities.MachineInfo;
-import com.cyberandrey.coffeemachine.entities.UsageLog;
-import com.cyberandrey.coffeemachine.repositories.MachineInfoRepo;
-import com.cyberandrey.coffeemachine.repositories.MachineRepo;
-import com.cyberandrey.coffeemachine.repositories.UsageLogRepo;
 import com.cyberandrey.coffeemachine.service.MachineService;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Instant;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/machine")
